@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from django.utils.timezone import now
 
 
 class Roles(models.Model):
@@ -11,25 +10,34 @@ class Roles(models.Model):
 
 
 class Student(models.Model):
+    GENDER_CHOICES = [
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('o', 'Other'),
+    ]
     regNumber = models.CharField(
         max_length=15, blank=True, default='BScICT/00/000')
     pwd = models.CharField(max_length=14, default='stu')
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
-    gender = models.CharField(max_length=10, blank=True, default='m')
+    gender = models.CharField(
+        max_length=10, choices=GENDER_CHOICES, default='m')
     cumulativeGPA = models.FloatField(blank=True, default=4.00)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
-        return self.firstname
+        return f"{self.firstname} {self.lastname}"
 
 
 class Election(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
+    def is_active(self):
+        return self.start_date <= now() <= self.end_date
+
     def __str__(self):
-        self.end_date
+        return f"Election ({self.start_date} - {self.end_date})"
 
 
 class Position(models.Model):
@@ -40,18 +48,30 @@ class Position(models.Model):
 
 
 class Candidate(models.Model):
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    position = models.ForeignKey(Position, on_delete=models.CASCADE)
+    election = models.ForeignKey(
+        Election, on_delete=models.CASCADE, related_name='candidates')
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='candidatures')
+    position = models.ForeignKey(
+        Position, on_delete=models.CASCADE, related_name='candidates')
+
+    class Meta:
+        unique_together = ('election', 'student', 'position')
 
     def __str__(self):
-        return self.student + "as " + self.position
+        return f"{self.student.firstname} as {self.position.name}"
 
 
 class Vote(models.Model):
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    voter = models.ForeignKey(Student, on_delete=models.CASCADE)
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    election = models.ForeignKey(
+        Election, on_delete=models.CASCADE, related_name='votes')
+    voter = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='votes')
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name='votes')
+
+    class Meta:
+        unique_together = ('election', 'voter', 'candidate')
 
     def __str__(self):
-        return self.voter
+        return f"Vote by {self.voter.firstname} for {self.candidate.student.firstname} as {self.candidate.position.name}"

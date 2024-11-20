@@ -1,25 +1,49 @@
 from rest_framework import serializers
-from cryptography.fernet import Fernet
-from .models import Student
-from django.conf import settings
+from .models import Roles, Student, Election, Position, Candidate, Vote
 
 
-# secret_key = settings.SECRET_ENCRYPTION_KEY
-# cipher_suite = Fernet(secret_key)
-# print(secret_key)
+class RolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Roles
+        fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
+class StudentSerializer(serializers.ModelSerializer):
+    role = RolesSerializer()  # Nested representation of role
+
     class Meta:
         model = Student
         fields = '__all__'
 
-    # def to_representation(self, instance):
-        # data = super().to_representation(instance)
 
-        # data['firstname'] = cipher_suite.encrypt(
-        #     data['firstname'].encode()).decode()
-        # data['lastname'] = cipher_suite.encrypt(
-        #     data['lastname'].encode()).decode()
+class ElectionSerializer(serializers.ModelSerializer):
+    is_active = serializers.BooleanField(
+        read_only=True)  # Adding a custom field
 
-        # return data
+    class Meta:
+        model = Election
+        fields = '__all__'
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = '__all__'
+
+
+class CandidateSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()  # Nested representation of the student
+    position = PositionSerializer()
+
+    class Meta:
+        model = Candidate
+        fields = '__all__'
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    voter = StudentSerializer()
+    candidate = CandidateSerializer()
+
+    class Meta:
+        model = Vote
+        fields = '__all__'
