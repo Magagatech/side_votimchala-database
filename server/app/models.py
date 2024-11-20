@@ -24,6 +24,9 @@ class Student(models.Model):
         max_length=10, choices=GENDER_CHOICES, default='m')
     cumulativeGPA = models.FloatField(blank=True, default=4.00)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE, default=1)
+    profile_pic = models.ImageField(
+        upload_to="profile_pics/", blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"

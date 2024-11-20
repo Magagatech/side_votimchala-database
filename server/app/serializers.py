@@ -17,12 +17,9 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class ElectionSerializer(serializers.ModelSerializer):
-    is_active = serializers.BooleanField(
-        read_only=True)  # Adding a custom field
-
     class Meta:
         model = Election
-        fields = '__all__'
+        fields = ['id', 'end_date', 'start_date']
 
 
 class PositionSerializer(serializers.ModelSerializer):

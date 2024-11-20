@@ -10,8 +10,11 @@ router.register(r'elections', ElectionViewSet)
 router.register(r'positions', PositionViewSet)
 router.register(r'candidates', CandidateViewSet)
 router.register(r'votes', VoteViewSet)
+# router.register(r'election', ElectionView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('apk/', include('app.urls')),
+
 ]
