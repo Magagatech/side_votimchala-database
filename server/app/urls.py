@@ -2,10 +2,11 @@ from rest_framework.routers import DefaultRouter
 
 from django.contrib import admin
 from django.urls import path, include
-import views
+from . import views
 
 
+app_name = 'app'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/login/<str:id>', views.Login),
+    path('election/', views.ElectionView.as_view(), name='election'),
 ]
