@@ -15,6 +15,11 @@ class Student(models.Model):
         ('f', 'Female'),
         ('o', 'Other'),
     ]
+    FACULTY_CHOICES = [
+        ('ict', 'ICT'),
+        ('bba', 'BBA'),
+        ('dnc', 'DNC'),
+    ]
     regNumber = models.CharField(
         max_length=15, blank=True, default='BScICT/00/000')
     pwd = models.CharField(max_length=14, default='stu')
@@ -27,6 +32,10 @@ class Student(models.Model):
     profile_pic = models.ImageField(
         upload_to="profile_pics/", blank=True, null=True
     )
+    faculty = models.CharField(
+        max_length=20, choices=FACULTY_CHOICES, default='ict')
+    email = models.EmailField(max_length=255, blank='true')
+    phone = models.CharField(max_length=14, default='+265000000000')
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
@@ -51,18 +60,29 @@ class Position(models.Model):
 
 
 class Candidate(models.Model):
+    APPLICATION_STATUS = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('declined', 'Declined'),
+    ]
+
     election = models.ForeignKey(
         Election, on_delete=models.CASCADE, related_name='candidates')
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='candidatures')
     position = models.ForeignKey(
         Position, on_delete=models.CASCADE, related_name='candidates')
+    # Added back the manifesto field
+    manifesto = models.TextField(blank=True, null=True)
+    status = models.CharField(
+        max_length=10, choices=APPLICATION_STATUS, default='pending'
+    )
 
     class Meta:
         unique_together = ('election', 'student', 'position')
 
     def __str__(self):
-        return f"{self.student.firstname} as {self.position.name}"
+        return f"{self.student.firstname} for {self.position.name} ({self.status})"
 
 
 class Vote(models.Model):
