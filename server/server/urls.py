@@ -1,14 +1,24 @@
 from rest_framework.routers import DefaultRouter
-
 from django.contrib import admin
 from django.urls import path, include
-from app.views import UserViewSet
+from app.views import RolesViewSet, StudentViewSet, ElectionViewSet, PositionViewSet, CandidateViewSet, VoteViewSet
+from posts.views import PostListCreate
 
-# framework stuff
 router = DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r'roles', RolesViewSet)
+router.register(r'students', StudentViewSet)
+router.register(r'elections', ElectionViewSet)
+router.register(r'positions', PositionViewSet)
+router.register(r'candidates', CandidateViewSet)
+router.register(r'votes', VoteViewSet)
+# router.register(r'posts', PostListCreate)
+# router.register(r'election', ElectionView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('apk/', include('app.urls')),
+     path('post/', include('posts.urls')),
+
+
 ]
