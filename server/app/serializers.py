@@ -29,12 +29,17 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 class CandidateSerializer(serializers.ModelSerializer):
-    student = StudentSerializer()  # Nested representation of the student
-    position = PositionSerializer()
-
     class Meta:
         model = Candidate
-        fields = '__all__'
+        fields = [
+            'id',
+            'election',
+            'student',
+            'position',
+            'manifesto',
+            'status',
+        ]
+        depth = 1  # Includes related FK data
 
 
 class VoteSerializer(serializers.ModelSerializer):
