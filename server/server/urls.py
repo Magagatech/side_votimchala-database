@@ -18,7 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('apk/', include('app.urls')),
-     path('post/', include('posts.urls')),
+    path('posts/', include('posts.urls')),
 
 
 ]
